@@ -38,7 +38,7 @@ func health(c *gin.Context) {
 
 	c.JSON(http.StatusOK, Resp{
 		Code:    "200",
-		Message: "Version 0.0.1 OK",
+		Message: "Version 0.0.2 OK",
 	})
 
 }
