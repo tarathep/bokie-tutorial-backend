@@ -1,0 +1,49 @@
+name: SIT - Build
+
+on:
+  push:
+    tags:
+      - '*'
+env:
+  APP_NAME: bokie-tutorial-backend
+  CONTAINER_REPOSITORY: "acrbokietutorial001.azurecr.io"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: 
+      name: sit
+      url: https://github.com/[name]/[name]-tutorial-pipeline/actions/workflows/dev-tutorial-backend-deploy.yml
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+    - name: Build image
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        tags: ${{ env.CONTAINER_REPOSITORY }}/${{ env.APP_NAME }}:${{env.RELEASE_VERSION}}
+
+    - name: "ACR login"
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.CONTAINER_REPOSITORY }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Push image
+      run: docker image push ${{ env.CONTAINER_REPOSITORY }}/${{ env.APP_NAME }}:${{env.RELEASE_VERSION}}
+
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        repository: tarathep/bokie-tutorial-pipeline
+        event-type: bokie-tutorial-backend-cd-sit
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
