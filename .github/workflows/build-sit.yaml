@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: sit
-      url: https://github.com/[name]/[name]-tutorial-pipeline/actions/workflows/dev-tutorial-backend-deploy.yml
+      url: https://github.com/tarathep/bokie-tutorial-pipeline/actions/workflows/sit-tutorial-backend-deploy.yaml
 
     steps:
     - name: Checkout code
@@ -39,11 +39,3 @@ jobs:
 
     - name: Push image
       run: docker image push ${{ env.CONTAINER_REPOSITORY }}/${{ env.APP_NAME }}:${{env.RELEASE_VERSION}}
-
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-        repository: tarathep/bokie-tutorial-pipeline
-        event-type: bokie-tutorial-backend-cd-sit
-        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
