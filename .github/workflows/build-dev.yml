@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: dev
-      url: https://github.com/tarathep/tutorial-pipeline/actions/workflows/dev-tutorial-backend-deploy.yml
+      url: https://github.com/tarathep/bokie-tutorial-pipeline/actions/workflows/dev-tutorial-backend-deploy.yaml
     needs: [unitest,analyze]
     steps:
     - name: Checkout code
